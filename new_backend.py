@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from util import dorm_info, to_cn_number
 from datetime import datetime
-# import datetime as dt
+import tempfile
 
 
 class new_backend:
@@ -18,6 +18,8 @@ class new_backend:
             options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        
+        options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
         # options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = webdriver.Chrome(options=options)
         self.url = url
