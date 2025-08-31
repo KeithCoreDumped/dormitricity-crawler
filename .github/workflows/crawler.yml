@@ -1,0 +1,28 @@
+name: Dormitricity Crawler
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id: { required: true }
+      token:  { required: true }
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -r requirements.txt
+
+      - name: Setup Google Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+          
+      - name: Run crawler
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          TOKEN:  ${{ inputs.token }}
+          WORKERS_BASE: https://<your-workers-subdomain>.workers.dev
+        run: python main.py ${{ secrets.PARAMS }}
