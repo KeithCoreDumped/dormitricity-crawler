@@ -12,6 +12,7 @@ from datetime import datetime
 
 class new_backend:
     def __init__(self, url, headless=True):
+        print("Creating new_backend client")
         options = Options()
         if headless:
             options.add_argument("--headless")
