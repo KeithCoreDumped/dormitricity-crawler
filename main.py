@@ -22,7 +22,7 @@ def process_slice(idx: int, targets: list[dict], params: dict):
                 kwh, ts = lb.query(dorm)
             return {
                 "hashed_dir": t["hashed_dir"],
-                "ts": ts,
+                "ts": int(ts.timestamp()), # in seconds
                 "kwh": kwh,
                 "ok": True
             }
