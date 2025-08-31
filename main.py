@@ -13,7 +13,7 @@ def process_slice(idx: int, targets: list[dict], params: dict):
     """
     results, fails = [], []
     lb = legacy_backend(cookies=params["cookies"])
-    with new_backend(params["url"], False) as nb:
+    with new_backend(params["url"], True) as nb:
         def one_target(t):
             dorm = dorm_info(t["canonical_id"])
             if dorm.is_new_backend():
