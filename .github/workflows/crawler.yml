@@ -22,7 +22,7 @@ jobs:
       # - run: chrome --version
 
       - name: Setup Chrome & Chrome Driver
-      - uses: nanasess/setup-chromedriver@v2
+        uses: nanasess/setup-chromedriver@v2
       - run: chromedriver --version
           
       - name: Run crawler
