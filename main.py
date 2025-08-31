@@ -13,29 +13,28 @@ def process_slice(idx: int, targets: list[dict], params: dict):
     """
     results, fails = [], []
     lb = legacy_backend(cookies=params["cookies"])
-    nb = new_backend(params["url"], False)
+    with new_backend(params["url"], False) as nb:
+        def one_target(t):
+            dorm = dorm_info(t["canonical_id"])
+            if dorm.is_new_backend():
+                kwh, ts = nb.query(dorm)
+            else:
+                kwh, ts = lb.query(dorm)
+            return {
+                "hashed_dir": t["hashed_dir"],
+                "ts": ts,
+                "kwh": kwh,
+                "ok": True
+            }
 
-    def one_target(t):
-        dorm = dorm_info(t["canonical_id"])
-        if dorm.is_new_backend():
-            kwh, ts = nb.query(dorm)
-        else:
-            kwh, ts = lb.query(dorm)
-        return {
-            "hashed_dir": t["hashed_dir"],
-            "ts": ts,
-            "kwh": kwh,
-            "ok": True
-        }
+        results = []
+        fails = []
 
-    results = []
-    fails = []
-
-    for t in targets:
-        try:
-            results.append(one_target(t))
-        except Exception as e:
-            fails.append({"hashed_dir": t["hashed_dir"], "reason": str(e)})
+        for t in targets:
+            try:
+                results.append(one_target(t))
+            except Exception as e:
+                fails.append({"hashed_dir": t["hashed_dir"], "reason": str(e)})
 
     payload = {
         "job_id": JOB_ID, "slice_index": idx,

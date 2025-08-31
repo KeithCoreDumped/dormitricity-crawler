@@ -24,8 +24,15 @@ class new_backend:
         self.driver = webdriver.Chrome(options=options)
         self.url = url
         
-    def __del__(self):
-        self.driver.quit()
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if self.driver:
+            try:
+                self.driver.quit()
+            except Exception:
+                pass
     
     def wait_click(self, parent_selector, selector, innertext=None, timeout=5):
         parent = WebDriverWait(self.driver, timeout, poll_frequency=0.1).until(
