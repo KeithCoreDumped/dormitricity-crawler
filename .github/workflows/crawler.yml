@@ -15,10 +15,15 @@ jobs:
         with: { python-version: '3.11' }
       - run: pip install -r requirements.txt
 
-      - name: Setup Google Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
+      # - name: Setup Google Chrome
+      #   uses: browser-actions/setup-chrome@v1
+      #   with:
+      #     chrome-version: stable
+      # - run: chrome --version
+
+      - name: Setup Chrome & Chrome Driver
+      - uses: nanasess/setup-chromedriver@v2
+      - run: chromedriver --version
           
       - name: Run crawler
         env:
