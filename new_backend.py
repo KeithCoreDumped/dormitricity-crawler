@@ -54,6 +54,7 @@ class new_backend:
         else:
             target = elems[0]
         target.click()
+        time.sleep(0.2)
         
     def query(self, dorm: dorm_info) -> tuple[float, datetime]:
         assert dorm.is_new_backend()
