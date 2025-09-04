@@ -40,7 +40,7 @@ class new_backend:
         WebDriverWait(parent, timeout, poll_frequency=0.1).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, selector))
         )
-        time.sleep(0.2)
+        time.sleep(0.5)
         elems = parent.find_elements(By.CSS_SELECTOR, selector)
         if not elems:
             raise RuntimeError(f"the element {selector} could not be located")
@@ -54,7 +54,7 @@ class new_backend:
         else:
             target = elems[0]
         target.click()
-        time.sleep(0.2)
+        time.sleep(0.5)
         
     def query(self, dorm: dorm_info) -> tuple[float, datetime]:
         assert dorm.is_new_backend()
