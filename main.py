@@ -42,7 +42,7 @@ def process_slice(idx: int, targets: list[dict], params: dict):
         "readings": results, "failures": fails, "finished": True
     }
     ingest(payload, TOKEN)
-    print(f"processed slice {idx}. {len(results)} succeeded, {len(fails)} failed, {len(targets)} in total")
+    print(f"processed slice {idx}. {len(results)} succeeded, {len(fails)} failed")
 
 def main(params: dict):
     while True:

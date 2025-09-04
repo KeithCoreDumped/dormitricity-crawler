@@ -12,7 +12,6 @@ import tempfile
 
 class new_backend:
     def __init__(self, url, headless=True):
-        print("Creating new_backend client")
         options = Options()
         if headless:
             options.add_argument("--headless")
@@ -37,6 +36,9 @@ class new_backend:
     def wait_click(self, parent_selector, selector, innertext=None, timeout=5):
         parent = WebDriverWait(self.driver, timeout, poll_frequency=0.1).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, parent_selector))
+        )
+        WebDriverWait(parent, timeout, poll_frequency=0.1).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, selector))
         )
         time.sleep(0.2)
         elems = parent.find_elements(By.CSS_SELECTOR, selector)
