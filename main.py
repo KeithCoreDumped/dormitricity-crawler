@@ -3,6 +3,7 @@ from api_client import claim, ingest
 from util import dorm_info
 from legacy_backend import legacy_backend
 from new_backend import new_backend
+import traceback
 
 JOB_ID = os.environ.get("JOB_ID", "test_job_id")
 TOKEN  = os.environ.get("TOKEN", "test_token")
@@ -34,7 +35,13 @@ def process_slice(idx: int, targets: list[dict], params: dict):
             try:
                 results.append(one_target(t))
             except Exception as e:
-                fails.append({"hashed_dir": t["hashed_dir"], "reason": str(e)})
+                msg = str(e)
+                name = type(e).__name__
+                bases = ",".join([c.__name__ for c in type(e).__bases__])
+                fails.append({
+                    "hashed_dir": t["hashed_dir"],
+                    "reason": f"[{name}] from [{bases}]: {msg}\n" + traceback.format_exc()
+                })
 
     payload = {
         "job_id": JOB_ID, "slice_index": idx,
