@@ -3,7 +3,7 @@ import os, json, requests
 BASE = os.environ.get("WORKERS_BASE", "https://example.com")
 
 def claim(job_id: str, token: str):
-    r = requests.post(f"{BASE}/orchestrator/claim",
+    r = requests.post(f"{BASE}/crawler/claim",
         headers={"Authorization": f"Bearer {token}", "Content-Type":"application/json"},
         data=json.dumps({"job_id": job_id})
     )
@@ -12,7 +12,7 @@ def claim(job_id: str, token: str):
     return r.json()
 
 def ingest(payload: dict, token: str):
-    r = requests.post(f"{BASE}/ingest",
+    r = requests.post(f"{BASE}/crawler/ingest",
         headers={"Authorization": f"Bearer {token}", "Content-Type":"application/json"},
         data=json.dumps(payload)
     )
