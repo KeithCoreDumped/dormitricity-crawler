@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 from util import dorm_info, to_cn_number, FetchFailure
+from zoneinfo import ZoneInfo
 
 class legacy_backend:
     cookies: dict
@@ -117,7 +118,11 @@ class legacy_backend:
         # freeEnd 和 surplus 在沙河是字符串
         #                    在西土城是浮点数
         ts = datetime.fromisoformat(data["time"])
-        return kwh, ts
+        # time 在沙河是   UTC+8 YYYY-MMM-DD HH:MM:SS.0
+        #      在西土城是 UTC+8 YYYY-MMM-DD HH:MM:SS
+        ts_local = ts.replace(tzinfo=ZoneInfo("Asia/Shanghai"))
+        ts_utc = ts_local.astimezone(ZoneInfo("UTC"))
+        return kwh, ts_utc
     
 if __name__ == "__main__":
     from secret import legacy_backend_cookies as cookies

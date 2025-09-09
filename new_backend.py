@@ -8,6 +8,7 @@ import time
 from util import dorm_info, to_cn_number
 from datetime import datetime
 import tempfile
+from zoneinfo import ZoneInfo
 
 
 class new_backend:
@@ -66,10 +67,9 @@ class new_backend:
         self.wait_click("ul.area-list", "li.item-list.van-hairline--bottom", f"{dorm.bld}号公寓")
         self.wait_click("ul.area-list", "li.item-list.van-hairline--bottom", f"{to_cn_number(dorm.floor)}层")
         self.wait_click("ul.area-list", "li.item-list.van-hairline--bottom", dorm.canonical_id)
-        ts = datetime.now()
+        ts = datetime.now(tz=ZoneInfo("UTC"))
         time.sleep(0.2)
         elem = self.driver.find_element(By.CSS_SELECTOR, "div.num")
-        print("balance:", elem.text)
         return float(elem.text), ts
     
     
