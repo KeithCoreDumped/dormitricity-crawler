@@ -1,0 +1,57 @@
+name: Trigger Cloudflare Worker
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "*/10 * * * *"  # 每10分钟
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: POST /trigger to Worker
+        env:
+          BASE: ${{ secrets.WORKERS_BASE }}
+          TOKEN: ${{ secrets.TRIGGER_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE:-}" ] || [ -z "${TOKEN:-}" ]; then
+            echo "Missing secrets: WORKERS_BASE or TRIGGER_SECRET"; exit 2
+          fi
+
+          URL="${BASE%/}/trigger"
+          echo "POST $URL"
+
+          # 3次尝试：网络/瞬时错误重试，带超时
+          for i in 1 2 3; do
+            http_code=$(curl -sS -o /tmp/resp.txt -w "%{http_code}" \
+              -X POST "$URL" \
+              -H "Content-Type: application/json" \
+              --connect-timeout 10 --max-time 20 \
+              --retry 3 --retry-delay 2 --retry-connrefused \
+              -d "{\"token\":\"$TOKEN\"}")
+
+            echo "HTTP $http_code"
+            echo "Response:"
+            cat /tmp/resp.txt || true
+            echo
+
+            if [ "$http_code" = "200" ]; then
+              echo "Trigger succeeded."; exit 0
+            fi
+
+            # 对 401/403 直接失败
+            if [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
+              echo "Unauthorized/Forbidden. Check TRIGGER_SECRET."; exit 1
+            fi
+
+            # 其他状态码退避后重试
+            sleep $((i*5))
+          done
+
+          echo "Trigger failed after retries."
+          exit 1
